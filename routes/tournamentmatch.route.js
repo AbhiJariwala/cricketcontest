@@ -1,36 +1,71 @@
 const { Router } = require('express');
 const router = Router();
 
-const { TournamentMatch } = require('../sequelize.js');
+const { TournamentMatch, Team, Player } = require('../sequelize.js');
 
-// router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
-//     let offset = parseInt(req.params.offset);
-//     let limit = parseInt(req.params.limit);
-//     let sortByColumn = req.params.sortByColumn;
-//     let sortDirection = req.params.sortDirection;
+router.get('/', (req, res) => {
+    TournamentMatch.findAll({
+        include: [{
+            model: Team,
+            as: 'Team1',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        },
+        {
+            model: Team,
+            as: 'Team2',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        }
+        ]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
 
-//     TournamentMatch.findAll({
-       
-//         limit: limit,
-//         offset: offset,
-//         order: [
-//             [sortByColumn, sortDirection]
-//         ],
-
-//     }).then((resp) => {
-//         res.json(resp).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-// });
-
-// router.get('/:id', (req, res) => {
-//     Tournament.findById(req.params.id).then((resp) => {
-//         res.json(resp).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-// });
+router.get('/:id', (req, res) => {
+    TournamentMatch.findById(req.params.id, {
+        include: [{
+            model: Team,
+            as: 'Team1',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        },
+        {
+            model: Team,
+            as: 'Team2',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        }
+        ]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
 
 
 router.post('/', (req, res) => {
@@ -56,12 +91,23 @@ router.put('/:id', (req, res) => {
         teamId2: req.body.teamId2,
         matchDate: req.body.matchDate,
         winningTeamId: req.body.winningTeamId,
-     }, 
-          { where: { id: req.params.id } }).then((tournamentMatch) => {
-        res.json(tournamentMatch).status(200);
-    }).catch((err) => {
-        res.json({ "error": JSON.stringify(err) }).status(400);
-    });
+    },
+        { where: { id: req.params.id } }).then((tournamentMatch) => {
+            res.json(tournamentMatch).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
+});
+
+router.delete('/:id', (req, res) => {
+    return TournamentMatch.update({
+        isDelete: 1
+    },
+        { where: { id: req.params.id } }).then((tournamentMatch) => {
+            res.json(tournamentMatch).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
 });
 
 

@@ -33,6 +33,10 @@ module.exports = (sequelize, type) => {
       updatedDate: {
         type : type.DATE,
         defaultValue : type.fn('NOW')
+      },
+      isActive: {
+        type : type.BOOLEAN,
+        defaultValue : true
       }
     }, {
       timestamps: false,

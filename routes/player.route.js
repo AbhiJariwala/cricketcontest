@@ -23,11 +23,22 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortDirection = req.params.sortDirection;
 
     Player.findAll({
+        where:{isActive:true},
         limit: limit,
         offset: offset,
         order: [
             [sortByColumn, sortDirection]
         ]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+router.get('/', (req, res) => {
+    Player.findAll({
+        where:{isActive:true}
     }).then((resp) => {
         res.json(resp).status(200);
     }).catch((err) => {
@@ -44,14 +55,14 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/',upload.single('playerImage'), (req, res) => {
     const obj = new Player();
     obj.firstName = req.body.firstName;
     obj.lastName = req.body.lastName;
     obj.dob = req.body.dob;
     obj.gender = req.body.gender;
     obj.description = req.body.description;
-    obj.playerImage=req.file.originalname;
+    obj.playerImage=req.file.filename;
 
     return obj.save().then((player) => {
         res.json(player).status(200);
@@ -61,17 +72,20 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id',upload.single('playerImage'), (req, res) => {
     return Player.update({
         firstName: req.body.firstName,
         lastName: req.body.lastName,
         dob: req.body.dob,
         gender: req.body.gender,
         description: req.body.description,
-        playerImage: req.file.playerImage
+        playerImage: req.file.filename
     },
         { where: { id: req.params.id } }).then((player) => {
-            res.json(player).status(200);
+            res.json({
+                ...player,
+                playerImage : req.file.filename
+            }).status(200);
         }).catch((err) => {
             res.json({ "error": JSON.stringify(err) }).status(400);
         });

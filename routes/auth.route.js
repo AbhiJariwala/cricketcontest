@@ -40,6 +40,7 @@ router.post('/login', (req, res, next) => {
 
     if (passportUser) {
       const user = {
+        id : passportUser.id,
         firstName : passportUser.firstName,
         lastName : passportUser.lastName,
         gender : passportUser.gender,

@@ -42,7 +42,7 @@ let errorLogStream = rfs('error.log', {
     path: logDirectory
 });
 
-var ImageDir = require('path').join(__dirname,'/assets/images');
+var ImageDir = require('path').join(__dirname,'/assets/images/');
 
 // Creating the express instance
 let app = express();
@@ -95,7 +95,7 @@ app.use('/api/userplayer', userPlayerRoute);
 app.use('/api/tournamentteam', tournamentTeamRoute);
 app.use('/api/teamplayer', teamPlayerRoute);
 app.use('/api/tournamentpoint',tournamentPointRoute);
-app.use('/api/tournamentmatchpointscore',tournamentMatchPlayerScoreRoute);
+app.use('/api/tournamentmatchplayerscore',tournamentMatchPlayerScoreRoute);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((err, req, res, next) => {

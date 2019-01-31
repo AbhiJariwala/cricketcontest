@@ -17,6 +17,7 @@ module.exports = (sequelize, type) => {
         type:type.INTEGER,
         defaultValue:0
       },
+      isDelete : type.INTEGER,
       createdBy:{
         type: type.INTEGER,
         defaultValue :0

@@ -15,6 +15,11 @@ const { TeamPlayer } = require('../sequelize.js');
 //         order: [
 //             [sortByColumn, sortDirection]
 //         ],
+//         include : [{
+//             model : Tournament,
+//             attributes : ['tournamentName', 'tournamentDescription'],
+//             required : false
+//         }]
 
 //     }).then((resp) => {
 //         res.json(resp).status(200);
@@ -32,16 +37,21 @@ const { TeamPlayer } = require('../sequelize.js');
 
 
 router.post('/', (req, res) => {
-    const obj = new TeamPlayer();
-    obj.tournamentId = req.body.tournamentId;
-    obj.teamId = req.body.teamId;
-    obj.playerId = req.body.playerId;
+    let teamPlayerArray = [];
+    let selectedPlayers = req.body.selectedPlayers;
+    for (const index in req.body.selectedPlayers) {
+        let obj = {};
+        obj.tournamentId = req.body.tournamentId;
+        obj.teamId = req.body.teamId;
+        obj.playerId = selectedPlayers[index];
+        teamPlayerArray.push(obj);
+    }
 
-    return obj.save().then((teamplayer) => {
-        res.json(teamplayer).status(200);
+    TeamPlayer.bulkCreate(teamPlayerArray, {returning : true}).then((teamPlayers) => {
+        res.json(teamPlayers).status(200);
     }).catch((err) => {
         res.json({ "error": JSON.stringify(err) }).status(400);
-    });
+    }); 
 
 });
 
@@ -57,5 +67,12 @@ router.put('/:id', (req, res) => {
     });
 });
 
+router.delete('/:id', (req, res) => {
+    return TeamPlayer.destroy({ where: { id: req.params.id } }).then((teamplayer) => {
+        res.json(teamplayer).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
 
 module.exports = router;

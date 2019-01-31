@@ -9,7 +9,8 @@ module.exports = (sequelize, type) => {
         primaryKey: true,
         autoIncrement: true,
       },
-      teamName: type.STRING,      
+      teamName: type.STRING,   
+      isDelete: type.INTEGER,    
       createdBy:{
         type: type.INTEGER,
         defaultValue :0

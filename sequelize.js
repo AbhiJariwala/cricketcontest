@@ -63,6 +63,9 @@ Team.belongsToMany(Player, { through: TeamPlayer, foreignKey: 'teamId',  as: 'pl
 TournamentPoint.belongsTo(Tournament, {foreignKey:'tournamentId', as:'points'});  
 Tournament.belongsTo(TournamentPoint, {foreignKey:'id',as:'points'}); 
 
+//
+Tournament.belongsToMany(Player, {through : TeamPlayer, foreignKey : 'tournamentId'});
+Player.belongsToMany(Tournament, {through : TeamPlayer, foreignKey : 'playerId'});
 
 
 sequelize

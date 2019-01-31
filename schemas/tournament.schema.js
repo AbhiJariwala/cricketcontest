@@ -11,6 +11,7 @@ module.exports = (sequelize, type) => {
       },
       tournamentName: type.STRING,
       tournamentDescription : type.STRING,      
+      isDelete : type.INTEGER,
       createdBy:{
         type: type.INTEGER,
         defaultValue :0

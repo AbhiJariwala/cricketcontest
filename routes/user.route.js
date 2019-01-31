@@ -35,6 +35,48 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     });
 });
 
+router.get('/', (req, res) => {
+    User.findAll({
+        attributes: {
+            exclude: ['password']
+        },
+        include: [{
+            model: Tournament,
+            required: false,
+            through: { attributes: [] },
+            include: [{
+                model:Player,
+                through: { attributes: [] }
+            }]
+        }]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+router.get('/', (req, res) => {
+    User.findAll({
+        attributes: {
+            exclude: ['password']
+        },
+        include: [{
+            model: Tournament,
+            required: false,
+            through: { attributes: [] },
+            include: [{
+                model:Player,
+                through: { attributes: [] }
+            }]
+        }]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
 router.get('/:id', (req, res) => {
     User.findById(req.params.id, {
         include: [{

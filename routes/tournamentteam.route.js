@@ -58,5 +58,16 @@ router.put('/:id', (req, res) => {
         });
 });
 
+router.delete('/:id', (req, res) => {
+    return TournamentTeam.update({
+        isDelete : 1
+    },
+        { where: { id: req.params.id } }).then((tournamentTeam) => {
+            res.json(tournamentTeam).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
+});
+
 
 module.exports = router;
