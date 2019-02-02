@@ -9,7 +9,7 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortByColumn = req.params.sortByColumn;
     let sortDirection = req.params.sortDirection;
 
-    TournamentMatch.findAll({
+    TournamentMatchPlayerScore.findAll({
         limit: limit,
         offset: offset,
         order: [
