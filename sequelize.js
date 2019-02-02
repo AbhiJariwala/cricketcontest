@@ -19,7 +19,7 @@ const sequelize = new Sequelize(database, username, password, {
   host: host,
   dialect: 'mysql',
   operatorsAliases: Op,
-  port: 3307,
+  port: 3306,
 });
 
 const User = UserModel(sequelize, Sequelize);
@@ -63,9 +63,15 @@ Team.belongsToMany(Player, { through: TeamPlayer, foreignKey: 'teamId',  as: 'pl
 TournamentPoint.belongsTo(Tournament, {foreignKey:'tournamentId', as:'points'});  
 Tournament.belongsTo(TournamentPoint, {foreignKey:'id',as:'points'}); 
 
-//
+//Get data of player in tournament 
 Tournament.belongsToMany(Player, {through : TeamPlayer, foreignKey : 'tournamentId'});
 Player.belongsToMany(Tournament, {through : TeamPlayer, foreignKey : 'playerId'});
+
+//add player data in teamplayer data response
+TeamPlayer.hasMany(Player,{foreignKey : 'id', sourceKey : 'playerId'});
+
+//add tournament data in TournamentMatchPlayerScore data response
+TournamentMatchPlayerScore.hasMany(Tournament,{foreignKey : 'id', sourceKey : 'tournamentId'});
 
 
 sequelize

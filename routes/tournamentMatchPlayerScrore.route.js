@@ -1,28 +1,30 @@
 const { Router } = require('express');
 const router = Router();
 
-const { TournamentMatchPlayerScore } = require('../sequelize.js');
+const { TournamentMatchPlayerScore, Tournament } = require('../sequelize.js');
 
-// router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
-//     let offset = parseInt(req.params.offset);
-//     let limit = parseInt(req.params.limit);
-//     let sortByColumn = req.params.sortByColumn;
-//     let sortDirection = req.params.sortDirection;
+router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
+    let offset = parseInt(req.params.offset);
+    let limit = parseInt(req.params.limit);
+    let sortByColumn = req.params.sortByColumn;
+    let sortDirection = req.params.sortDirection;
 
-//     TournamentMatch.findAll({
-       
-//         limit: limit,
-//         offset: offset,
-//         order: [
-//             [sortByColumn, sortDirection]
-//         ],
+    TournamentMatch.findAll({
+        limit: limit,
+        offset: offset,
+        order: [
+            [sortByColumn, sortDirection]
+        ],
+        include:[{
+            model : Tournament
+        }]
 
-//     }).then((resp) => {
-//         res.json(resp).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-// });
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
 
 // router.get('/:id', (req, res) => {
 //     Tournament.findById(req.params.id).then((resp) => {
@@ -66,6 +68,17 @@ router.put('/:id', (req, res) => {
         four : req.body.four,
         stumping : req.body.stumping,
         score : req.body.score,
+     }, 
+          { where: { id: req.params.id } }).then((tournamentMatchPlayerScore) => {
+        res.json(tournamentMatchPlayerScore).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+router.delete('/:id', (req, res) => {
+    return TournamentMatchPlayerScore.update({
+       isDelete : 1
      }, 
           { where: { id: req.params.id } }).then((tournamentMatchPlayerScore) => {
         res.json(tournamentMatchPlayerScore).status(200);
