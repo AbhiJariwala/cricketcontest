@@ -32,9 +32,6 @@ const TournamentMatch = TournamentMatchModel(sequelize,Sequelize);
 const TeamPlayer = TeamPlayerModel(sequelize, Sequelize);
 const TournamentPoint =TournamentPointModel(sequelize, Sequelize);
 const TournamentMatchPlayerScore =TournamentMatchPlayerScoreModel(sequelize, Sequelize);
-// sequelize.sync().then(() => {
-//   console.log(`Users db and user table have been created`);
-// });
 
 //To get Data Of Teams in Tournament Model
 Team.belongsToMany(Tournament, { through: TournamentTeam, foreignKey: 'teamId'});
@@ -63,7 +60,6 @@ Team.belongsToMany(Player, { through: TeamPlayer, foreignKey: 'teamId',  as: 'pl
 TournamentPoint.belongsTo(Tournament, {foreignKey:'tournamentId', as:'points'});  
 Tournament.belongsTo(TournamentPoint, {foreignKey:'id',as:'points'}); 
 
-//
 Tournament.belongsToMany(Player, {through : TeamPlayer, foreignKey : 'tournamentId'});
 Player.belongsToMany(Tournament, {through : TeamPlayer, foreignKey : 'playerId'});
 

@@ -73,18 +73,14 @@ router.post('/',upload.single('playerImage'), (req, res) => {
 });
 
 router.put('/:id',upload.single('playerImage'), (req, res) => {
-    return Player.update({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        dob: req.body.dob,
-        gender: req.body.gender,
-        description: req.body.description,
-        playerImage: req.file.filename
-    },
+    if(req.file){
+        req.body.playerImage= req.file.filename
+    }
+    return Player.update(req.body,
         { where: { id: req.params.id } }).then((player) => {
             res.json({
                 ...player,
-                playerImage : req.file.filename
+                playerImage:req.body.playerImage
             }).status(200);
         }).catch((err) => {
             res.json({ "error": JSON.stringify(err) }).status(400);

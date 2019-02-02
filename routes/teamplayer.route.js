@@ -3,39 +3,6 @@ const router = Router();
 
 const { TeamPlayer } = require('../sequelize.js');
 
-// router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
-//     let offset = parseInt(req.params.offset);
-//     let limit = parseInt(req.params.limit);
-//     let sortByColumn = req.params.sortByColumn;
-//     let sortDirection = req.params.sortDirection;
-
-//     TeamPlayer.findAll({
-//         limit: limit,
-//         offset: offset,
-//         order: [
-//             [sortByColumn, sortDirection]
-//         ],
-//         include : [{
-//             model : Tournament,
-//             attributes : ['tournamentName', 'tournamentDescription'],
-//             required : false
-//         }]
-
-//     }).then((resp) => {
-//         res.json(resp).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-// });
-// router.get('/:id', (req, res) => {
-//     TeamPlayer.findById(req.params.id).then((resp) => {
-//         res.json(resp).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-// });
-
-
 router.post('/', (req, res) => {
     let teamPlayerArray = [];
     let selectedPlayers = req.body.selectedPlayers;
@@ -74,5 +41,63 @@ router.delete('/:id', (req, res) => {
         res.json({ "error": JSON.stringify(err) }).status(400);
     });
 });
+
+
+router.get('/:', (req, res) => {
+    Tournament.findById(req.params.id, {
+        where: {
+            isDelete: 0
+        },
+        include: [{
+            model: Team,
+            required: false,
+            through: { attributes: [] },
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: ['id'] }
+            }]
+        },
+        {
+            model: TournamentMatch,
+            include: [{
+                model: Team,
+                as: 'Team1',
+            },
+            {
+                model: Team,
+                as: 'Team2',
+            }
+            ]
+        }, { model: TournamentPoint, as: 'points' }
+        ]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
+    let offset = parseInt(req.params.offset);
+    let limit = parseInt(req.params.limit);
+    let sortByColumn = req.params.sortByColumn;
+    let sortDirection = req.params.sortDirection;
+
+    TeamPlayer.findAll({ limit: limit,
+        offset: offset,
+        order: [
+            [sortByColumn, sortDirection]
+        ],
+
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+
 
 module.exports = router;

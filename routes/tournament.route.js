@@ -147,7 +147,7 @@ router.post('/', (req, res) => {
     const obj = new Tournament();
     obj.tournamentName = req.body.tournamentName;
     obj.tournamentDescription = req.body.tournamentDescription;
-
+    obj.createdBy = req.body.createdBy;
     return obj.save().then((tournament) => {
         res.json(tournament).status(200);
     }).catch((err) => {
@@ -162,7 +162,7 @@ router.put('/:id', (req, res) => {
         tournamentName: "",
         tournamentDescription: ""
     };
-    return Tournament.update({ tournamentName: req.body.tournamentName, tournamentDescription: req.body.tournamentDescription }, { where: { id: req.params.id } })
+    return Tournament.update({ tournamentName: req.body.tournamentName, tournamentDescription: req.body.tournamentDescription,updatedBy: req.body.updatedBy}, { where: { id: req.params.id } })
         .then((tournament) => {
             Tournament.findById(req.params.id)
                 .then(tnt => {
