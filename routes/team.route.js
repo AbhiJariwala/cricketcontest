@@ -71,7 +71,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
     const obj = new Team();
     obj.teamName = req.body.teamName;
-
+    obj.createdBy = req.body.createdBy;
     return obj.save().then((team) => {
         res.json(team).status(200);
     }).catch((err) => {
@@ -81,7 +81,7 @@ router.post('/', (req, res) => {
 });
 
 router.put('/:id', (req, res) => {
-    return Team.update({ teamName: req.body.teamName }, { where: { id: req.params.id } }).then((team) => {
+    return Team.update({ teamName: req.body.teamName,updatedBy: req.body.updatedBy }, { where: { id: req.params.id } }).then((team) => {
         res.json(team).status(200);
     }).catch((err) => {
         res.json({ "error": JSON.stringify(err) }).status(400);

@@ -95,24 +95,6 @@ router.get('/:id', (req, res) => {
     });
 });
 
-
-// router.post('/', (req, res) => {
-//     const obj = new User();
-//     obj.firstName = req.body.firstName;
-//     obj.lastName = req.body.lastName;
-//     obj.gender = req.body.gender;
-//     obj.email = req.body.email;
-//     obj.password = generateHash(req.body.password);
-
-
-//     return obj.save().then((team) => {
-//         res.json(team).status(200);
-//     }).catch((err) => {
-//         res.json({ "error": JSON.stringify(err) }).status(400);
-//     });
-
-// });
-
 router.put('/:id', (req, res) => {
     return User.update({
         firstName: req.body.firstName,
