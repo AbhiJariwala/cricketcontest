@@ -16,7 +16,7 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         include: [{
             model: Team,
             required: false,
-            through: { attributes: ['id'] },
+            through: { attributes: ['id','isDelete'] },
             include: [{
                 model: Player,
                 required: false,
@@ -68,7 +68,7 @@ router.get('/', (req, res) => {
         include: [{
             model: Team,
             required: false,
-            through: { attributes: ['id'] },
+            through: { attributes: ['id','isDelete'] },
             include: [{
                 model: Player,
                 required: false,

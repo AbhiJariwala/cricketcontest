@@ -28,12 +28,12 @@ router.put('/:id', (req, res) => {
         });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:tournamentId/:teamId', (req, res) => {
     return TournamentTeam.update({
         isDelete : 1
     },
-        { where: { id: req.params.id } }).then((tournamentTeam) => {
-            res.json({...tournamentTeam}).status(200);
+        { where: { tournamentId:req.params.tournamentId,teamId: req.params.teamId } }).then((tournamentTeam) => {
+            res.json({...tournamentTeam,id}).status(200);
         }).catch((err) => {
             res.json({ "error": JSON.stringify(err) }).status(400);
         });
