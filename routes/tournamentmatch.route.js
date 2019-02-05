@@ -3,6 +3,49 @@ const router = Router();
 
 const { TournamentMatch, Team, Player } = require('../sequelize.js');
 
+
+router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
+    let offset = parseInt(req.params.offset);
+    let limit = parseInt(req.params.limit);
+    let sortByColumn = req.params.sortByColumn;
+    let sortDirection = req.params.sortDirection;
+
+    TournamentMatch.findAll({
+        include: [{
+            model: Team,
+            as: 'Team1',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        },
+        {
+            model: Team,
+            as: 'Team2',
+            include: [{
+                model: Player,
+                required: false,
+                as: 'player',
+                through: { attributes: [] }
+            }
+            ]
+        }
+        ],
+        limit: limit,
+        offset: offset,
+        order: [
+            [sortByColumn, sortDirection]
+        ]
+    }).then((resp) => {
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
 router.get('/', (req, res) => {
     TournamentMatch.findAll({
         include: [{

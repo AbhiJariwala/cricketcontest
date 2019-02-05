@@ -17,43 +17,44 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         ],
         include: [{
             model: Tournament,
+            where: { isDelete: 0 },
             include: [
-            {
-                model: TournamentMatch,
-                include: [{
-                    model: Team,
-                    as: 'Team1',
+                {
+                    model: TournamentMatch,
                     include: [{
-                        model: Player,
-                        required: false,
-                        as: 'player',
-                        through: { attributes: [] }
+                        model: Team,
+                        as: 'Team1',
+                        include: [{
+                            model: Player,
+                            required: false,
+                            as: 'player',
+                            through: { attributes: [] }
+                        }
+                        ]
+                    },
+                    {
+                        model: Team,
+                        as: 'Team2',
+                        include: [{
+                            model: Player,
+                            required: false,
+                            as: 'player',
+                            through: { attributes: [] }
+                        }
+                        ]
                     }
                     ]
                 },
                 {
-                    model: Team,
-                    as: 'Team2',
-                    include: [{
-                        model: Player,
-                        required: false,
-                        as: 'player',
-                        through: { attributes: [] }
-                    }
-                    ]
+                    model: TournamentPoint,
+                    as: 'points'
+                },
+                {
+                    model: Player,
+                    required: false,
+                    through: { attributes: [] },
+                    attributes: ['id']
                 }
-                ]
-            },
-            {
-                model: TournamentPoint,
-                as: 'points'
-            },
-            {
-                model: Player,
-                required: false,
-                through: { attributes: [] },
-                attributes: ['id']
-            }
             ]
         }]
 
