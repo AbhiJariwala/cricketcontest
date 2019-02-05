@@ -1,7 +1,21 @@
 const { Router } = require('express');
 const router = Router();
+let multer = require('multer');
 
 const { Team, Player } = require('../sequelize.js');
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './assets/images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+});
+
+const upload = multer({
+    storage
+});
 
 router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let offset = parseInt(req.params.offset);
@@ -68,10 +82,11 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/', upload.single('teamLogo'), (req, res) => {
     const obj = new Team();
     obj.teamName = req.body.teamName;
     obj.createdBy = req.body.createdBy;
+    obj.teamLogo = req.file.filename;
     return obj.save().then((team) => {
         res.json(team).status(200);
     }).catch((err) => {
@@ -80,12 +95,20 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/:id', (req, res) => {
-    return Team.update({ teamName: req.body.teamName,updatedBy: req.body.updatedBy }, { where: { id: req.params.id } }).then((team) => {
-        res.json(team).status(200);
-    }).catch((err) => {
-        res.json({ "error": JSON.stringify(err) }).status(400);
-    });
+router.put('/:id', upload.single('teamLogo'), (req, res) => {
+    if (req.file) {
+        req.body.teamLogo = req.file.filename
+    }
+    return Team.update(req.body,
+        { where: { id: req.params.id } })
+        .then((team) => {
+            res.json({
+                ...team,
+                teamLogo: req.body.teamLogo
+            }).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
 });
 
 router.delete('/:id', (req, res) => {

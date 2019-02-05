@@ -9,6 +9,7 @@ module.exports = (sequelize, type) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      tournamentBanner:type.STRING,
       tournamentName: type.STRING,
       tournamentDescription : type.STRING,      
       isDelete : type.INTEGER,

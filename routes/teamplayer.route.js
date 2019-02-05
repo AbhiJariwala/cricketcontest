@@ -43,7 +43,8 @@ router.get('/:tournamentId/:teamId', (req, res) => {
             teamId: req.params.teamId
         },
         include: [{
-            model: Player
+            model: Player,
+            where: { isActive: true }
         }],
     }).then((resp) => {
         res.json(resp).status(200);
@@ -92,41 +93,41 @@ router.delete('/:id', (req, res) => {
 });
 
 
-router.get('/:', (req, res) => {
-    Tournament.findById(req.params.id, {
-        where: {
-            isDelete: 0
-        },
-        include: [{
-            model: Team,
-            required: false,
-            through: { attributes: [] },
-            include: [{
-                model: Player,
-                required: false,
-                as: 'player',
-                through: { attributes: ['id'] }
-            }]
-        },
-        {
-            model: TournamentMatch,
-            include: [{
-                model: Team,
-                as: 'Team1',
-            },
-            {
-                model: Team,
-                as: 'Team2',
-            }
-            ]
-        }, { model: TournamentPoint, as: 'points' }
-        ]
-    }).then((resp) => {
-        res.json(resp).status(200);
-    }).catch((err) => {
-        res.json({ "error": JSON.stringify(err) }).status(400);
-    });
-});
+// router.get('/:id', (req, res) => {
+//     Tournament.findById(req.params.id, {
+//         where: {
+//             isDelete: 0
+//         },
+//         include: [{
+//             model: Team,
+//             required: false,
+//             through: { attributes: [] },
+//             include: [{
+//                 model: Player,
+//                 required: false,
+//                 as: 'player',
+//                 through: { attributes: ['id'] }
+//             }]
+//         },
+//         {
+//             model: TournamentMatch,
+//             include: [{
+//                 model: Team,
+//                 as: 'Team1',
+//             },
+//             {
+//                 model: Team,
+//                 as: 'Team2',
+//             }
+//             ]
+//         }, { model: TournamentPoint, as: 'points' }
+//         ]
+//     }).then((resp) => {
+//         res.json(resp).status(200);
+//     }).catch((err) => {
+//         res.json({ "error": JSON.stringify(err) }).status(400);
+//     });
+// });
 
 router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let offset = parseInt(req.params.offset);
@@ -134,7 +135,8 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortByColumn = req.params.sortByColumn;
     let sortDirection = req.params.sortDirection;
 
-    TeamPlayer.findAll({ limit: limit,
+    TeamPlayer.findAll({
+        limit: limit,
         offset: offset,
         order: [
             [sortByColumn, sortDirection]
@@ -146,7 +148,5 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         res.json({ "error": JSON.stringify(err) }).status(400);
     });
 });
-
-
 
 module.exports = router;

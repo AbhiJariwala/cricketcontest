@@ -1,7 +1,20 @@
 const { Router } = require('express');
 const router = Router();
-
+let multer = require('multer');
 const { Tournament, Team, TournamentMatch, Player, TournamentPoint } = require('../sequelize.js');
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null,'./assets/images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+});
+
+const upload = multer({
+    storage
+});
 
 router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let offset = parseInt(req.params.offset);
@@ -143,11 +156,12 @@ router.get('/:id', (req, res) => {
 });
 
 
-router.post('/', (req, res) => {
+router.post('/',upload.single('tournamentBanner'), (req, res) => {
     const obj = new Tournament();
     obj.tournamentName = req.body.tournamentName;
     obj.tournamentDescription = req.body.tournamentDescription;
     obj.createdBy = req.body.createdBy;
+    obj.tournamentBanner=req.file.filename;
     return obj.save().then((tournament) => {
         res.json(tournament).status(200);
     }).catch((err) => {
@@ -156,19 +170,24 @@ router.post('/', (req, res) => {
 
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id',upload.single('tournamentBanner'), (req, res) => {
+    if(req.file){
+        req.body.tournamentBanner= req.file.filename
+    }
     let updatedTnt = {
         id: 0,
         tournamentName: "",
         tournamentDescription: ""
     };
-    return Tournament.update({ tournamentName: req.body.tournamentName, tournamentDescription: req.body.tournamentDescription,updatedBy: req.body.updatedBy}, { where: { id: req.params.id } })
+    return Tournament.update(req.body,
+        { where: { id: req.params.id } })
         .then((tournament) => {
             Tournament.findById(req.params.id)
                 .then(tnt => {
                     res.send({
                         status: tournament,
-                        tournament: tnt
+                        tournament: tnt,
+                        tournamentBanner:req.body.tournamentBanner
                     }).status(200);
                 })
 

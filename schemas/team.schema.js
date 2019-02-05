@@ -9,6 +9,7 @@ module.exports = (sequelize, type) => {
         primaryKey: true,
         autoIncrement: true,
       },
+      teamLogo:type.STRING,
       teamName: type.STRING,   
       isDelete: type.INTEGER,    
       createdBy:{
