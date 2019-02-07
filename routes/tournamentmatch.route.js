@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { TournamentMatch, Team, Player } = require('../sequelize.js');
+const { TournamentMatch, Team, Player, Tournament } = require('../sequelize.js');
 
 
 router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
@@ -11,28 +11,32 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortDirection = req.params.sortDirection;
 
     TournamentMatch.findAll({
-        include: [{
-            model: Team,
-            as: 'Team1',
-            include: [{
-                model: Player,
-                required: false,
-                as: 'player',
-                through: { attributes: [] }
+        include: [
+            {
+                model: Tournament,
+                as: "Tournament",
+                attributes: ['id', 'tournamentName']
+            },
+            {
+                model: Team,
+                as: 'Team1',
+                include: [{
+                    model: Player,
+                    required: false,
+                    as: 'player',
+                    through: { attributes: [] }
+                }]
+            },
+            {
+                model: Team,
+                as: 'Team2',
+                include: [{
+                    model: Player,
+                    required: false,
+                    as: 'player',
+                    through: { attributes: [] }
+                }]
             }
-            ]
-        },
-        {
-            model: Team,
-            as: 'Team2',
-            include: [{
-                model: Player,
-                required: false,
-                as: 'player',
-                through: { attributes: [] }
-            }
-            ]
-        }
         ],
         limit: limit,
         offset: offset,
@@ -40,6 +44,7 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
             [sortByColumn, sortDirection]
         ]
     }).then((resp) => {
+        console.log(resp);
         res.json(resp).status(200);
     }).catch((err) => {
         res.json({ "error": JSON.stringify(err) }).status(400);

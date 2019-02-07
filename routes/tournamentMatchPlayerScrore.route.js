@@ -15,7 +15,13 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         order: [
             [sortByColumn, sortDirection]
         ],
-        include: [{
+        include: [
+            {
+                model: Player,
+                as: 'Player',
+                attributes: ['id', 'firstName', 'lastName']
+            },
+            {
             model: Tournament,
             where: { isDelete: 0 },
             include: [
@@ -24,24 +30,10 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
                     include: [{
                         model: Team,
                         as: 'Team1',
-                        include: [{
-                            model: Player,
-                            required: false,
-                            as: 'player',
-                            through: { attributes: [] }
-                        }
-                        ]
                     },
                     {
                         model: Team,
                         as: 'Team2',
-                        include: [{
-                            model: Player,
-                            required: false,
-                            as: 'player',
-                            through: { attributes: [] }
-                        }
-                        ]
                     }
                     ]
                 },
@@ -56,7 +48,8 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
                     attributes: ['id']
                 }
             ]
-        }]
+        },
+       ]
 
     }).then((resp) => {
         res.json(resp).status(200);
