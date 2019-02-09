@@ -7,7 +7,7 @@ router.post('/', (req, res) => {
     const tournamentTeamObject = new TournamentTeam();
     tournamentTeamObject.tournamentId = req.body.tournamentId;
     tournamentTeamObject.teamId = req.body.teamId;
-
+    tournamentTeamObject.createdBy = req.body.createdBy;
     return tournamentTeamObject.save().then((tournamentTeam) => {
         res.json(tournamentTeam).status(200);
     }).catch((err) => {
@@ -28,11 +28,12 @@ router.put('/:id', (req, res) => {
         });
 });
 
-router.delete('/:tournamentId/:teamId', (req, res) => {
+router.delete('/:tournamentId/:teamId/:updatedBy', (req, res) => {    
     return TournamentTeam.update({
-        isDelete : 1
+        isDelete : 1,
+        updatedBy:req.params.updatedBy
     },
-        { where: { tournamentId:req.params.tournamentId,teamId: req.params.teamId } }).then((tournamentTeam) => {
+        { where: { tournamentId:req.params.tournamentId, teamId: req.params.teamId } }).then((tournamentTeam) => {
             res.json({...tournamentTeam,id}).status(200);
         }).catch((err) => {
             res.json({ "error": JSON.stringify(err) }).status(400);

@@ -37,6 +37,7 @@ router.post('/', (req, res) => {
         obj.tournamentId = req.body.tournamentId;
         obj.teamId = req.body.teamId;
         obj.playerId = selectedPlayers[index];
+        obj.createdBy = req.body.createdBy;
         teamPlayerArray.push(obj);
     }
 
@@ -48,8 +49,9 @@ router.post('/', (req, res) => {
 
 });
 
-router.delete('/:id', (req, res) => {
-    return TeamPlayer.update({ isDelete: 1 }, { where: { id: req.params.id } }).then((teamplayer) => {
+router.delete('/:id/:updatedBy', (req, res) => {
+    console.log(req.body.updatedBy);
+    return TeamPlayer.update({ isDelete: 1, updatedBy: req.params.updatedBy }, { where: { id: req.params.id } }).then((teamplayer) => {
         res.json(teamplayer).status(200);
     }).catch((err) => {
         res.json({ "error": JSON.stringify(err) }).status(400);

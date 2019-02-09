@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const router = Router();
 
-const { UserPlayer } = require('../sequelize.js');
+const { UserPlayer, TournamentMatch, Player } = require('../sequelize.js');
 
 router.post('/', (req, res) => {
     const userPlayerObject = new UserPlayer();
-    userPlayerObject.tournamentId = req.body.tournamentId;
+    userPlayerObject.tournamentMatchId = req.body.tournamentMatchId;
     userPlayerObject.userId = req.body.userId;
     userPlayerObject.playerId = req.body.playerId;
 
@@ -19,9 +19,9 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
     return UserPlayer.update({
-        tournamentId : req.body.tournamentId,
-        userId : req.body.userId,
-        playerId : req.body.playerId,
+        tournamentMatchId: req.body.tournamentMatchId,
+        userId: req.body.userId,
+        playerId: req.body.playerId,
     },
         { where: { id: req.params.id } }).then((userplayer) => {
             res.json(userplayer).status(200);
@@ -30,5 +30,25 @@ router.put('/:id', (req, res) => {
         });
 });
 
+router.get('/:tournamentMatchId', (req, res) => {
+    return UserPlayer.findAll({
+        where: {
+            tournamentMatchId: req.params.tournamentMatchId
+        },
+        include: [{
+            model: TournamentMatch,
+            as: "TournamentMatch"
+        },
+        {
+            model: Player,
+            as: "Player"
+        }]
+    }).then((resp) => {
+        console.log(resp);
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+})
 
 module.exports = router;

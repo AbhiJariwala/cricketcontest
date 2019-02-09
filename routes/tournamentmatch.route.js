@@ -11,6 +11,9 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortDirection = req.params.sortDirection;
 
     TournamentMatch.findAll({
+        where: {
+            isDelete: 0
+        },
         include: [
             {
                 model: Tournament,
@@ -43,6 +46,48 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         order: [
             [sortByColumn, sortDirection]
         ]
+    }).then((resp) => {
+        console.log(resp);
+        res.json(resp).status(200);
+    }).catch((err) => {
+        res.json({ "error": JSON.stringify(err) }).status(400);
+    });
+});
+
+
+router.get('/:tournamentId', (req, res) => {
+    TournamentMatch.findAll({
+        where: {
+            isDelete: 0,
+            tournamentId: req.params.tournamentId   
+        },
+        include: [
+            {
+                model: Tournament,
+                as: "Tournament",
+                attributes: ['id', 'tournamentName']
+            },
+            {
+                model: Team,
+                as: 'Team1',
+                include: [{
+                    model: Player,
+                    required: false,
+                    as: 'player',
+                    through: { attributes: [] }
+                }]
+            },
+            {
+                model: Team,
+                as: 'Team2',
+                include: [{
+                    model: Player,
+                    required: false,
+                    as: 'player',
+                    through: { attributes: [] }
+                }]
+            }
+        ],
     }).then((resp) => {
         console.log(resp);
         res.json(resp).status(200);

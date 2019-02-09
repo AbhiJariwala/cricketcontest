@@ -58,7 +58,7 @@ Player.belongsToMany(Team, { through: TeamPlayer, foreignKey: 'playerId', as: 'p
 Team.belongsToMany(Player, { through: TeamPlayer, foreignKey: 'teamId', as: 'player' });
 
 //Get Data of Tournamanet Point in Tournamnet
-TournamentPoint.belongsTo(Tournament, { foreignKey: 'tournamentId', as: 'points' });
+TournamentPoint.belongsTo(Tournament, { foreignKey: 'tournamentId', as: 'Tournament' });
 Tournament.belongsTo(TournamentPoint, { foreignKey: 'id', as: 'points' });
 
 //Get data of player in tournament 
@@ -71,6 +71,10 @@ TeamPlayer.hasMany(Player, { foreignKey: 'id', sourceKey: 'playerId' });
 //add tournament data in TournamentMatchPlayerScore data response
 TournamentMatchPlayerScore.hasMany(Tournament, { foreignKey: 'id', sourceKey: 'tournamentId' });
 TournamentMatchPlayerScore.belongsTo(Player, { foreignKey: 'playerId', sourceKey: "id" });
+
+
+// UserPlayer.hasMany(TournamentMatch, { foreignKey: 'tournamentMatchId', sourceKey: "id" });
+// UserPlayer.hasMany(Player, { foreignKey: 'playerId', as: 'Player' });
 
 sequelize
   .authenticate()

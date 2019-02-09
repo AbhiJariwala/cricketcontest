@@ -173,12 +173,7 @@ router.post('/', upload.single('tournamentBanner'), (req, res) => {
 router.put('/:id', upload.single('tournamentBanner'), (req, res) => {
     if (req.file) {
         req.body.tournamentBanner = req.file.filename
-    }
-    let updatedTnt = {
-        id: 0,
-        tournamentName: "",
-        tournamentDescription: ""
-    };
+    }   
     return Tournament.update(req.body,
         { where: { id: req.params.id } })
         .then((tournament) => {
