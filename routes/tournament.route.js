@@ -1,6 +1,9 @@
 const { Router } = require('express');
 const router = Router();
 let multer = require('multer');
+const path = require('path');
+const Jimp = require('jimp');
+
 const { Tournament, Team, TournamentMatch, Player, TournamentPoint } = require('../sequelize.js');
 
 var storage = multer.diskStorage({
@@ -161,7 +164,25 @@ router.post('/', upload.single('tournamentBanner'), (req, res) => {
     obj.tournamentName = req.body.tournamentName;
     obj.tournamentDescription = req.body.tournamentDescription;
     obj.createdBy = req.body.createdBy;
-    obj.tournamentBanner = req.file.filename;
+    let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+    let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+    if (req.file) {
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(100, 70) // resize
+                    .quality(100) // set JPEG quality
+                    .write(thumbnailImagePath); // save
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        obj.tournamentBanner = req.file.filename;
+    }
+    else {
+        obj.tournamentBanner = 'defaultTournament.png';
+    }
+
     return obj.save().then((tournament) => {
         res.json(tournament).status(200);
     }).catch((err) => {
@@ -173,7 +194,19 @@ router.post('/', upload.single('tournamentBanner'), (req, res) => {
 router.put('/:id', upload.single('tournamentBanner'), (req, res) => {
     if (req.file) {
         req.body.tournamentBanner = req.file.filename
-    }   
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(100, 70) // resize
+                    .quality(100) // set JPEG quality
+                    .write(thumbnailImagePath); // save
+            })
+            .catch(err => {
+                console.error(err);
+            });
+    }
     return Tournament.update(req.body,
         { where: { id: req.params.id } })
         .then((tournament) => {

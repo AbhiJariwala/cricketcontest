@@ -2,6 +2,8 @@ const { Router } = require('express');
 const router = Router();
 let multer = require('multer');
 const { Player } = require('../sequelize.js');
+const path = require('path');
+const Jimp = require('jimp');
 
 var storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -62,8 +64,24 @@ router.post('/', upload.single('playerImage'), (req, res) => {
     obj.dob = req.body.dob;
     obj.gender = req.body.gender;
     obj.description = req.body.description;
-    obj.playerImage = req.file.filename;
-
+    if (req.file) {
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(30, 30) // resize
+                    .quality(100) // set JPEG quality
+                    .write(thumbnailImagePath); // save
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        obj.playerImage = req.file.filename;
+    }
+    else {
+        obj.playerImage = 'defaultPlayerImage.png';
+    }
     return obj.save().then((player) => {
         res.json(player).status(200);
     }).catch((err) => {
@@ -74,8 +92,21 @@ router.post('/', upload.single('playerImage'), (req, res) => {
 
 router.put('/:id', upload.single('playerImage'), (req, res) => {
     if (req.file) {
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(60, 60) // resize
+                    .quality(100) // set JPEG quality
+                    .write(thumbnailImagePath); // save
+            })
+            .catch(err => {
+                console.error(err);
+            });
         req.body.playerImage = req.file.filename
     }
+
     return Player.update(req.body,
         { where: { id: req.params.id } }).then((player) => {
             res.json({

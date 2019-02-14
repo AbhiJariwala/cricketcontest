@@ -23,10 +23,15 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
     let sortDirection = req.params.sortDirection;
 
     TournamentPoint.findAll({
+        
         include: [{
+
             model: Tournament,
             as: "Tournament",
-            attributes: ['id', 'tournamentName']
+            attributes: ['id', 'tournamentName'],
+            where:{
+                isDelete:0
+            }
         }],
         limit: limit,
         offset: offset,

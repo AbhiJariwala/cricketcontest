@@ -1,6 +1,8 @@
 const { Router } = require('express');
 const router = Router();
 let multer = require('multer');
+const path = require('path');
+const Jimp = require('jimp');
 
 const { Team, Player } = require('../sequelize.js');
 
@@ -86,7 +88,25 @@ router.post('/', upload.single('teamLogo'), (req, res) => {
     const obj = new Team();
     obj.teamName = req.body.teamName;
     obj.createdBy = req.body.createdBy;
-    obj.teamLogo = req.file.filename;
+    let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+    let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+    if (req.file) {
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(60, 60)
+                    .quality(100)
+                    .write(thumbnailImagePath);
+            })
+            .catch(err => {
+                console.error(err);
+            });
+        obj.teamLogo = req.file.filename;
+    }
+    else {
+        obj.teamLogo = 'defaultTeamLogo.png';
+    }
+
     return obj.save().then((team) => {
         res.json(team).status(200);
     }).catch((err) => {
@@ -98,6 +118,18 @@ router.post('/', upload.single('teamLogo'), (req, res) => {
 router.put('/:id', upload.single('teamLogo'), (req, res) => {
     if (req.file) {
         req.body.teamLogo = req.file.filename
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+        Jimp.read(imagePath)
+            .then(result => {
+                return result
+                    .resize(60, 60)
+                    .quality(100)
+                    .write(thumbnailImagePath);
+            })
+            .catch(err => {
+                console.error(err);
+            });
     }
     return Team.update(req.body,
         { where: { id: req.params.id } })

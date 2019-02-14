@@ -37,13 +37,13 @@ const TournamentMatchPlayerScore = TournamentMatchPlayerScoreModel(sequelize, Se
 Team.belongsToMany(Tournament, { through: TournamentTeam, foreignKey: 'teamId' });
 Tournament.belongsToMany(Team, { through: TournamentTeam, foreignKey: 'tournamentId' });
 
-//To get Data Of Tournaments in User   Model
-Tournament.belongsToMany(User, { through: UserPlayer, foreignKey: 'tournamentId' });
-User.belongsToMany(Tournament, { through: UserPlayer, foreignKey: 'userId' });
+//To get Data Of Tournaments in User Model
+// Tournament.belongsToMany(User, { through: UserPlayer, foreignKey: 'tournamentId' });
+// User.belongsToMany(Tournament, { through: UserPlayer, foreignKey: 'userId' });
 
 //To get Data Of Players selected By User in Tournament Model 
-Player.belongsToMany(Tournament, { through: UserPlayer, foreignKey: 'playerId' });
-Tournament.belongsToMany(Player, { through: UserPlayer, foreignKey: 'tournamentId' });
+//Player.belongsToMany(Tournament, { through: UserPlayer, foreignKey: 'playerId' });
+//Tournament.belongsToMany(Player, { through: UserPlayer, foreignKey: 'tournamentId' });
 
 //To get Data Of Match in  Tournament Model 
 Tournament.hasMany(TournamentMatch, { foreignKey: 'tournamentId', sourceKey: 'id' });
@@ -73,8 +73,10 @@ TournamentMatchPlayerScore.hasMany(Tournament, { foreignKey: 'id', sourceKey: 't
 TournamentMatchPlayerScore.belongsTo(Player, { foreignKey: 'playerId', sourceKey: "id" });
 
 
-// UserPlayer.hasMany(TournamentMatch, { foreignKey: 'tournamentMatchId', sourceKey: "id" });
-// UserPlayer.hasMany(Player, { foreignKey: 'playerId', as: 'Player' });
+UserPlayer.hasMany(TournamentMatch, { foreignKey: 'id', sourceKey: "tournamentMatchId" });
+//TournamentMatch.belongsTo(UserPlayer, { foreignKey: 'tournamentMatchId', sourceKey: "id" });
+UserPlayer.hasMany(Player, { foreignKey: 'id', sourceKey: "playerId" });
+//Player.belongsTo(UserPlayer, { foreignKey: 'playerId', sourceKey: "id" });
 
 sequelize
   .authenticate()

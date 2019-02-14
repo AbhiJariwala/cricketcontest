@@ -16,7 +16,7 @@ router.post('/', (req, res) => {
     });
 
 });
-
+    
 router.put('/:id', (req, res) => {
     return UserPlayer.update({
         tournamentMatchId: req.body.tournamentMatchId,
@@ -30,18 +30,16 @@ router.put('/:id', (req, res) => {
         });
 });
 
-router.get('/:tournamentMatchId', (req, res) => {
+router.get('/:userId', (req, res) => {
     return UserPlayer.findAll({
         where: {
-            tournamentMatchId: req.params.tournamentMatchId
+            userId: req.params.userId
         },
         include: [{
-            model: TournamentMatch,
-            as: "TournamentMatch"
+            model: TournamentMatch
         },
         {
             model: Player,
-            as: "Player"
         }]
     }).then((resp) => {
         console.log(resp);

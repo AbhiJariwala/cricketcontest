@@ -19,7 +19,7 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
             required: false,
             through: { attributes: [] },
             include: [{
-                model:Player,
+                model: Player,
                 through: { attributes: [] }
             }]
         }],
@@ -39,37 +39,7 @@ router.get('/', (req, res) => {
     User.findAll({
         attributes: {
             exclude: ['password']
-        },
-        include: [{
-            model: Tournament,
-            required: false,
-            through: { attributes: [] },
-            include: [{
-                model:Player,
-                through: { attributes: [] }
-            }]
-        }]
-    }).then((resp) => {
-        res.json(resp).status(200);
-    }).catch((err) => {
-        res.json({ "error": JSON.stringify(err) }).status(400);
-    });
-});
-
-router.get('/', (req, res) => {
-    User.findAll({
-        attributes: {
-            exclude: ['password']
-        },
-        include: [{
-            model: Tournament,
-            required: false,
-            through: { attributes: [] },
-            include: [{
-                model:Player,
-                through: { attributes: [] }
-            }]
-        }]
+        }
     }).then((resp) => {
         res.json(resp).status(200);
     }).catch((err) => {
@@ -84,7 +54,7 @@ router.get('/:id', (req, res) => {
             required: false,
             through: { attributes: [] },
             include: [{
-                model:Player,
+                model: Player,
                 through: { attributes: [] }
             }]
         }],
