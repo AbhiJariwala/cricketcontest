@@ -88,9 +88,10 @@ router.post('/', upload.single('teamLogo'), (req, res) => {
     const obj = new Team();
     obj.teamName = req.body.teamName;
     obj.createdBy = req.body.createdBy;
-    let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
-    let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+
     if (req.file) {
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
         Jimp.read(imagePath)
             .then(result => {
                 return result
@@ -117,7 +118,7 @@ router.post('/', upload.single('teamLogo'), (req, res) => {
 
 router.put('/:id', upload.single('teamLogo'), (req, res) => {
     if (req.file) {
-        req.body.teamLogo = req.file.filename
+
         let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
         let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
         Jimp.read(imagePath)
@@ -130,6 +131,10 @@ router.put('/:id', upload.single('teamLogo'), (req, res) => {
             .catch(err => {
                 console.error(err);
             });
+        req.body.teamLogo = req.file.filename
+    }
+    else {
+        req.body.teamLogo = 'defaultTeamLogo.png';
     }
     return Team.update(req.body,
         { where: { id: req.params.id } })
