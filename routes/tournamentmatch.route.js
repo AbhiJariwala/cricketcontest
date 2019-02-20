@@ -59,7 +59,7 @@ router.get('/:tournamentId', (req, res) => {
     TournamentMatch.findAll({
         where: {
             isDelete: 0,
-            tournamentId: req.params.tournamentId   
+            tournamentId: req.params.tournamentId
         },
         include: [
             {
@@ -184,6 +184,18 @@ router.put('/:id', (req, res) => {
         teamId2: req.body.teamId2,
         matchDate: req.body.matchDate,
         winningTeamId: req.body.winningTeamId,
+    },
+        { where: { id: req.params.id } }).then((tournamentMatch) => {
+            res.json(tournamentMatch).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
+});
+
+router.put('/:id/:winningTeamId', (req, res) => {
+    return TournamentMatch.update({
+
+        winningTeamId: req.params.winningTeamId,
     },
         { where: { id: req.params.id } }).then((tournamentMatch) => {
             res.json(tournamentMatch).status(200);

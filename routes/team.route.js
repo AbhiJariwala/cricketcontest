@@ -133,9 +133,10 @@ router.put('/:id', upload.single('teamLogo'), (req, res) => {
             });
         req.body.teamLogo = req.file.filename
     }
-    else {
-        req.body.teamLogo = 'defaultTeamLogo.png';
+    else if (req.body.teamLogo == 'defaultTeamLogo.png') {
+        req.body.tournamentBanner = "defaultTeamLogo.png"
     }
+
     return Team.update(req.body,
         { where: { id: req.params.id } })
         .then((team) => {

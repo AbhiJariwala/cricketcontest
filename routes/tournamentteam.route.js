@@ -34,11 +34,11 @@ router.delete('/:tournamentId/:teamId/:updatedBy', (req, res) => {
         updatedBy:req.params.updatedBy
     },
         { where: { tournamentId:req.params.tournamentId, teamId: req.params.teamId } }).then((tournamentTeam) => {
-            res.json({...tournamentTeam,id}).status(200);
+            res.json(tournamentTeam).status(200);
         }).catch((err) => {
             res.json({ "error": JSON.stringify(err) }).status(400);
         });
 });
-
+    
 
 module.exports = router;

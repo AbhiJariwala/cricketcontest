@@ -22,34 +22,34 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
                 attributes: ['id', 'firstName', 'lastName']
             },
             {
-            model: Tournament,
-            where: { isDelete: 0 },
-            include: [
-                {
-                    model: TournamentMatch,
-                    include: [{
-                        model: Team,
-                        as: 'Team1',
+                model: Tournament,
+                where: { isDelete: 0 },
+                include: [
+                    {
+                        model: TournamentMatch,
+                        include: [{
+                            model: Team,
+                            as: 'Team1',
+                        },
+                        {
+                            model: Team,
+                            as: 'Team2',
+                        }
+                        ]
                     },
                     {
-                        model: Team,
-                        as: 'Team2',
+                        model: TournamentPoint,
+                        as: 'points'
+                    },
+                    {
+                        model: Player,
+                        required: false,
+                        through: { attributes: [] },
+                        attributes: ['id']
                     }
-                    ]
-                },
-                {
-                    model: TournamentPoint,
-                    as: 'points'
-                },
-                {
-                    model: Player,
-                    required: false,
-                    through: { attributes: [] },
-                    attributes: ['id']
-                }
-            ]
-        },
-       ]
+                ]
+            },
+        ]
 
     }).then((resp) => {
         res.json(resp).status(200);
@@ -57,6 +57,56 @@ router.get('/:offset/:limit/:sortByColumn/:sortDirection', (req, res) => {
         res.json({ "error": JSON.stringify(err) }).status(400);
     });
 });
+
+router.get('/:id', (req, res) => {
+    TournamentMatchPlayerScore.findAll(
+        {
+            where: {
+                tournamentId: req.params.id
+            },
+            include: [
+                {
+                    model: Player,
+                    as: 'Player',
+                    attributes: ['id', 'firstName', 'lastName']
+                },
+                {
+                    model: Tournament,
+                    where: { isDelete: 0 },
+                    include: [
+                        {
+                            model: TournamentMatch,
+                            include: [{
+                                model: Team,
+                                as: 'Team1',
+                            },
+                            {
+                                model: Team,
+                                as: 'Team2',
+                            }
+                            ]
+                        },
+                        {
+                            model: TournamentPoint,
+                            as: 'points'
+                        },
+                        {
+                            model: Player,
+                            required: false,
+                            through: { attributes: [] },
+                            attributes: ['id']
+                        }
+                    ]
+                },
+            ]
+
+        }).then((resp) => {
+            res.json(resp).status(200);
+        }).catch((err) => {
+            res.json({ "error": JSON.stringify(err) }).status(400);
+        });
+});
+
 
 // router.get('/:id', (req, res) => {
 //     Tournament.findById(req.params.id).then((resp) => {

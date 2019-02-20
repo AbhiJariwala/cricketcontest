@@ -70,7 +70,7 @@ router.post('/', upload.single('playerImage'), (req, res) => {
         Jimp.read(imagePath)
             .then(result => {
                 return result
-                    .resize(30, 30) // resize
+                    .resize(60, 60) // resize
                     .quality(100) // set JPEG quality
                     .write(thumbnailImagePath); // save
             })
@@ -105,6 +105,9 @@ router.put('/:id', upload.single('playerImage'), (req, res) => {
                 console.error(err);
             });
         req.body.playerImage = req.file.filename
+    }
+    else if (req.body.playerImage == "defaultPlayerImage.png") {
+        req.body.playerImage == "defaultPlayerImage.png"
     }
 
     return Player.update(req.body,

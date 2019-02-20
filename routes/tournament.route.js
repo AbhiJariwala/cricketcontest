@@ -164,9 +164,10 @@ router.post('/', upload.single('tournamentBanner'), (req, res) => {
     obj.tournamentName = req.body.tournamentName;
     obj.tournamentDescription = req.body.tournamentDescription;
     obj.createdBy = req.body.createdBy;
-    let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
-    let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
+
     if (req.file) {
+        let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
+        let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
         Jimp.read(imagePath)
             .then(result => {
                 return result
@@ -193,7 +194,6 @@ router.post('/', upload.single('tournamentBanner'), (req, res) => {
 
 router.put('/:id', upload.single('tournamentBanner'), (req, res) => {
     if (req.file) {
-        req.body.tournamentBanner = req.file.filename
         let imagePath = path.join(__dirname, '../assets/images/' + req.file.filename);
         let thumbnailImagePath = path.join(__dirname, '../assets/images/thumbnail/' + req.file.filename);
         Jimp.read(imagePath)
@@ -206,7 +206,12 @@ router.put('/:id', upload.single('tournamentBanner'), (req, res) => {
             .catch(err => {
                 console.error(err);
             });
+        req.body.tournamentBanner = req.file.filename
     }
+    else if (req.body.tournamentBanner == "defaultTournament.png") {
+        req.body.tournamentBanner = "defaultTournament.png"
+    }
+   
     return Tournament.update(req.body,
         { where: { id: req.params.id } })
         .then((tournament) => {

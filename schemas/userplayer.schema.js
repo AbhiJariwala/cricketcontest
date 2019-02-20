@@ -9,7 +9,7 @@ module.exports = (sequelize, type) => {
       primaryKey: true,
       autoIncrement: true,
     },
-    tournamentMatchId: type.INTEGER,
+    tournamentId: type.INTEGER,
     userId: type.INTEGER,
     playerId: type.INTEGER,
     createdBy: {

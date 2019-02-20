@@ -5,7 +5,7 @@ const { UserPlayer, TournamentMatch, Player } = require('../sequelize.js');
 
 router.post('/', (req, res) => {
     const userPlayerObject = new UserPlayer();
-    userPlayerObject.tournamentMatchId = req.body.tournamentMatchId;
+    userPlayerObject.tournamentId = req.body.tournamentId;
     userPlayerObject.userId = req.body.userId;
     userPlayerObject.playerId = req.body.playerId;
 
@@ -19,7 +19,7 @@ router.post('/', (req, res) => {
     
 router.put('/:id', (req, res) => {
     return UserPlayer.update({
-        tournamentMatchId: req.body.tournamentMatchId,
+        tournamentId: req.body.tournamentId,
         userId: req.body.userId,
         playerId: req.body.playerId,
     },
@@ -35,9 +35,7 @@ router.get('/:userId', (req, res) => {
         where: {
             userId: req.params.userId
         },
-        include: [{
-            model: TournamentMatch
-        },
+        include: [
         {
             model: Player,
         }]
